@@ -7,13 +7,14 @@ type SwappedCards = {
 }
 
 interface ICardDeck {
-    get getDeck() : ICard[];
-    get size() : number;
+    getDeck() : ICard[];
+    size() : number;
 
     shuffle() : this;
     slowShuffle() : Generator<SwappedCards, void, unknown>;
 
     setCommonReverseSide(imageUrl : string) : this;
+    getCard(number : number) : ICard | undefined;
 }
 
 export default class CardDeck implements ICardDeck {  
@@ -21,15 +22,15 @@ export default class CardDeck implements ICardDeck {
         private deck : ICard[],
     ) { }
 
-    get getDeck() : ICard[] {
+    public getDeck() : ICard[] {
         return this.deck;
     }
 
-    get size() : number {
+    public size() : number {
         return this.deck.length;
     }
     
-    shuffle() : this {
+    public shuffle() : this {
         for (let i = this.deck.length - 1; i > 0; i--) {
             let j = Math.floor(Math.random() * (i + 1));
             [this.deck[i], this.deck[j]] = [this.deck[j], this.deck[i]];
@@ -38,7 +39,7 @@ export default class CardDeck implements ICardDeck {
         return this;
     }
 
-    * slowShuffle() : Generator<SwappedCards, void, unknown> {
+    public * slowShuffle() : Generator<SwappedCards, void, unknown> {
         for (let i = this.deck.length - 1; i > 0; i--) {
             let j = Math.floor(Math.random() * (i + 1));
 
@@ -52,11 +53,19 @@ export default class CardDeck implements ICardDeck {
         }
     }
 
-    setCommonReverseSide(imageUrl : string) : this {
+    public setCommonReverseSide(imageUrl : string) : this {
         for(let card of this.deck) {
-            card.setImageUrl(imageUrl);
+            card.setReverseSideUrl(imageUrl);
         }
 
         return this;
+    }
+
+    public getCard(number: number): ICard{
+        if (number < 0 || number >= this.deck.length) {
+            throw new RangeError(`The card number ${number} is out of range. Valid range is between 0 and ${this.deck.length - 1}.`);
+        }
+
+        return this.deck[number];
     }
 }

@@ -1,0 +1,13 @@
+.deck {
+    position: relative;
+
+    &__card {
+        width: 400px;
+        height: 600px;
+       
+        & img {
+            overflow: hidden;
+            border-radius: 6%;
+        }
+    }
+}
